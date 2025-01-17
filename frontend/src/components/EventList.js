@@ -67,7 +67,9 @@ const EventList = ({ events, setEvents }) => {
                     <p className="card-text">
                       <strong>Reminder:</strong> 
                       {new Date(event.reminder).toLocaleString('en-US', {
+                        timeZone: 'Asia/Kolkata', // Change this to your local timezone
                         timeZoneName: 'short',
+                        hour12: true,
                       })}
                     </p>
                   )}
