@@ -66,7 +66,7 @@ const EventForm = ({ setEvents, eventToEdit, setEventToEdit }) => {
     try {
       if (eventToEdit) {
         const response = await axios.put(
-          `http://localhost:5000/api/events/${eventToEdit._id}`,
+          `https://testapi-3-a0gg.onrender.com/api/events/${eventToEdit._id}`,
           formData
         );
         setEvents((prevEvents) =>
@@ -76,7 +76,7 @@ const EventForm = ({ setEvents, eventToEdit, setEventToEdit }) => {
         );
       } else {
         const response = await axios.post(
-          'http://localhost:5000/api/events',
+          'https://testapi-3-a0gg.onrender.com/api/events',
           formData
         );
         setEvents((prevEvents) => [...prevEvents, response.data]);
