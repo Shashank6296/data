@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const EventForm = ({ setEvents, eventToEdit, setEventToEdit }) => {
   const [formData, setFormData] = useState({
-    name: "",
-    date: "",
-    time: "",
-    location: "",
-    description: "",
-    category: "",
-    reminder: "",
+    name: '',
+    date: '',
+    time: '',
+    location: '',
+    description: '',
+    category: '',
+    reminder: '',
   });
 
-  // Request notification permission on load
+  // Request Notification permission on component mount
   useEffect(() => {
-    if (Notification.permission !== "granted") {
+    if (Notification.permission !== 'granted') {
       Notification.requestPermission();
     }
   }, []);
 
-  // Populate form when editing an event
+  // Pre-fill form data when editing an event
   useEffect(() => {
     if (eventToEdit) {
       setFormData({
@@ -34,23 +34,22 @@ const EventForm = ({ setEvents, eventToEdit, setEventToEdit }) => {
     }
   }, [eventToEdit]);
 
-  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Schedule a reminder notification
   const setReminderNotification = () => {
     if (formData.reminder) {
-      const reminderDate = new Date(formData.reminder); // Parse input as local date
+      const reminderDate = new Date(formData.reminder);
       const now = new Date();
 
-      if (reminderDate > now) {
-        const timeDifference = reminderDate.getTime() - now.getTime();
+      // Adjust the time zone offset to make sure the reminder triggers at the correct time
+      const timeDifference = reminderDate - now;
 
+      if (timeDifference > 0) {
         setTimeout(() => {
-          new Notification("Event Reminder", {
+          new Notification('Event Reminder', {
             body: `Reminder for event: ${formData.name} at ${formData.time}`,
           });
         }, timeDifference);
@@ -58,47 +57,52 @@ const EventForm = ({ setEvents, eventToEdit, setEventToEdit }) => {
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Set reminder notification
     setReminderNotification();
 
     try {
       if (eventToEdit) {
-        // Update existing event
         const response = await axios.put(
-          `https://testapi-3-a0gg.onrender.com/api/events/${eventToEdit._id}`,
+          `http://localhost:5000/api/events/${eventToEdit._id}`,
           formData
         );
         setEvents((prevEvents) =>
-          prevEvents.map((event) => (event._id === eventToEdit._id ? response.data : event))
+          prevEvents.map((event) =>
+            event._id === eventToEdit._id ? response.data : event
+          )
         );
       } else {
-        // Create new event
-        const response = await axios.post("https://testapi-3-a0gg.onrender.com/api/events", formData);
+        const response = await axios.post(
+          'http://localhost:5000/api/events',
+          formData
+        );
         setEvents((prevEvents) => [...prevEvents, response.data]);
       }
 
-      // Clear the form
+      // Reset the form data after submitting
       setFormData({
-        name: "",
-        date: "",
-        time: "",
-        location: "",
-        description: "",
-        category: "",
-        reminder: "",
+        name: '',
+        date: '',
+        time: '',
+        location: '',
+        description: '',
+        category: '',
+        reminder: '',
       });
+
+      // Reset the eventToEdit state
       setEventToEdit(null);
     } catch (error) {
-      console.error("Error saving event:", error);
+      console.error('Error saving event:', error);
     }
   };
 
   return (
-    <div className="container my-4">
-      <form onSubmit={handleSubmit} className="row g-3">
+    <div className="container-fluid px-3 my-4">
+      <form className="row g-3" onSubmit={handleSubmit}>
         <div className="col-md-6">
           <label htmlFor="name" className="form-label">
             Event Name
@@ -130,6 +134,7 @@ const EventForm = ({ setEvents, eventToEdit, setEventToEdit }) => {
             <option value="Work">Work</option>
             <option value="Personal">Personal</option>
             <option value="Birthday">Birthday</option>
+            {/* Add other categories as needed */}
           </select>
         </div>
 
@@ -165,7 +170,7 @@ const EventForm = ({ setEvents, eventToEdit, setEventToEdit }) => {
 
         <div className="col-md-6">
           <label htmlFor="location" className="form-label">
-            Location
+            Event Location
           </label>
           <input
             type="text"
@@ -180,7 +185,7 @@ const EventForm = ({ setEvents, eventToEdit, setEventToEdit }) => {
 
         <div className="col-md-6">
           <label htmlFor="description" className="form-label">
-            Description
+            Event Description
           </label>
           <textarea
             id="description"
@@ -207,8 +212,8 @@ const EventForm = ({ setEvents, eventToEdit, setEventToEdit }) => {
         </div>
 
         <div className="col-12">
-          <button type="submit" className="btn btn-primary w-100">
-            {eventToEdit ? "Update Event" : "Add Event"}
+          <button type="submit" className="btn btn-success w-100">
+            {eventToEdit ? 'Update Event' : 'Add Event'}
           </button>
         </div>
       </form>
