@@ -65,7 +65,10 @@ const EventList = ({ events, setEvents }) => {
                   </p>
                   {event.reminder && (
                     <p className="card-text">
-                      <strong>Reminder:</strong> {new Date(event.reminder).toLocaleString()}
+                      <strong>Reminder:</strong> 
+                      {new Date(event.reminder).toLocaleString('en-US', {
+                        timeZoneName: 'short',
+                      })}
                     </p>
                   )}
                   <div className="mt-auto d-flex justify-content-between">
