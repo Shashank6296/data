@@ -76,7 +76,7 @@ const EventForm = ({ setEvents, eventToEdit, setEventToEdit }) => {
         );
       } else {
         // Create new event
-        const response = await axios.post("https://testapi-3-a0gg.onrender.com/api/events/api/events", formData);
+        const response = await axios.post("https://testapi-3-a0gg.onrender.com/api/events", formData);
         setEvents((prevEvents) => [...prevEvents, response.data]);
       }
 
